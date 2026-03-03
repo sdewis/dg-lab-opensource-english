@@ -133,6 +133,12 @@
                 <span>Current Status: </span>
                 <span id="status" class="red">Disconnected</span>
                 <span id="status-light" class="red"> ●</span>
+                <div id="latency-monitor" style="font-size: 12px; margin-top: 5px; color: #ffe99d; display: none;">
+                    Latency: <span id="latency-value">--</span>ms
+                </div>
+            </div>
+            <div class="waveform-container" style="margin-top: 10px; width: 100%;">
+                <canvas id="waveform-canvas" style="width: 100%; height: 40px; background: #222; border-radius: 3px;"></canvas>
             </div>
             <div class="connect-btn">
                 <button onclick="showInfo()">Instructions</button>

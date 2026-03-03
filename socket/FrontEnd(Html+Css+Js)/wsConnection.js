@@ -11,6 +11,16 @@ let reconnectAttempts = 0;
 const maxReconnectAttempts = 10;
 const baseReconnectDelay = 1000; // 1 second
 
+// Latency monitor
+let lastPingTime = 0;
+let pingInterval = null;
+
+// Waveform visualiser
+let waveformDataA = new Array(50).fill(0);
+let waveformDataB = new Array(50).fill(0);
+let canvas = null;
+let ctx = null;
+
 const feedBackMsg = {
     "feedback-0": "Channel A: ○",
     "feedback-1": "Channel A: △",
@@ -34,6 +44,7 @@ function updateStatusUI(status, isError = false) {
     const statusEl = document.getElementById("status");
     const lightEl = document.getElementById("status-light");
     const btnEl = document.getElementById("status-btn");
+    const latencyMon = document.getElementById("latency-monitor");
 
     if (!statusEl || !lightEl || !btnEl) return;
 
@@ -43,21 +54,110 @@ function updateStatusUI(status, isError = false) {
         lightEl.classList.add("red");
         btnEl.innerText = "Connect";
         btnEl.classList.remove("red-background");
+        if (latencyMon) latencyMon.style.display = "none";
     } else if (status === "Connected") {
         statusEl.classList.remove("red");
         lightEl.classList.remove("red");
         btnEl.innerText = "Disconnect";
         btnEl.classList.add("red-background");
+        if (latencyMon) latencyMon.style.display = "block";
     } else {
         statusEl.classList.add("red");
         lightEl.classList.add("red");
         btnEl.innerText = "Connect";
         btnEl.classList.remove("red-background");
+        if (latencyMon) latencyMon.style.display = "none";
     }
 }
 
+function startPing() {
+    stopPing();
+    pingInterval = setInterval(() => {
+        if (wsConn && wsConn.readyState === WebSocket.OPEN) {
+            lastPingTime = performance.now();
+            sendWsMsg({ type: "ping", message: "latency-check" });
+        }
+    }, 3000);
+}
+
+function stopPing() {
+    if (pingInterval) {
+        clearInterval(pingInterval);
+        pingInterval = null;
+    }
+}
+
+function drawWaveform() {
+    if (!canvas) {
+        canvas = document.getElementById("waveform-canvas");
+        if (!canvas) return;
+        ctx = canvas.getContext("2d");
+    }
+
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Draw Channel A (Green)
+    ctx.beginPath();
+    ctx.strokeStyle = "#00ff37";
+    ctx.lineWidth = 2;
+    for (let i = 0; i < waveformDataA.length; i++) {
+        const x = (i / (waveformDataA.length - 1)) * w;
+        const y = h - (waveformDataA[i] / 100) * h;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Draw Channel B (Yellowish)
+    ctx.beginPath();
+    ctx.strokeStyle = "#ffe99d";
+    ctx.lineWidth = 2;
+    for (let i = 0; i < waveformDataB.length; i++) {
+        const x = (i / (waveformDataB.length - 1)) * w;
+        const y = h - (waveformDataB[i] / 100) * h;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Shift data
+    waveformDataA.push(0);
+    waveformDataA.shift();
+    waveformDataB.push(0);
+    waveformDataB.shift();
+
+    requestAnimationFrame(drawWaveform);
+}
+
+function updateWaveformData(channel, hexArray) {
+    // Extract intensities from V3 HEX data
+    // Format is pulse-A:["HEX", "HEX", ...]
+    // Each HEX is 16 chars (8 bytes). Strength 4 items are bytes 4-7 or 12-15 depending on channel
+    // Actually the app receiving protocol says:
+    // pulse-A:[waveform data...] where each is 8 bytes HEX
+    // From V3 protocol: 0xB0 + ... + A waveform strength 4 bytes + B waveform strength 4 bytes
+    // Wait, the client sends pulse-A: ["HEX"...] where each HEX is the 8-byte V3 pulse data.
+    // In V3, strength is 1 byte per 25ms.
+    
+    hexArray.forEach(hex => {
+        // Simple extraction: the last 4 bytes are usually the strengths in these examples
+        // or we just take the max value found in the byte sequence for visualization
+        for (let i = 0; i < hex.length; i += 2) {
+            const val = parseInt(hex.substr(i, 2), 16);
+            if (val <= 100 && val > 0) {
+                if (channel === 'A') {
+                    waveformDataA[waveformDataA.length - 1] = Math.max(waveformDataA[waveformDataA.length - 1], val);
+                } else {
+                    waveformDataB[waveformDataB.length - 1] = Math.max(waveformDataB[waveformDataB.length - 1], val);
+                }
+            }
+        }
+    });
+}
+
 function connectWs() {
-    // Please change the content to your ws server address
     const wsUrl = "ws://12.34.56.78:9999/";
     wsConn = new WebSocket(wsUrl);
 
@@ -65,6 +165,8 @@ function connectWs() {
         console.log("WebSocket connection established");
         reconnectAttempts = 0;
         updateStatusUI("Connected");
+        startPing();
+        drawWaveform();
     };
 
     wsConn.onmessage = function (event) {
@@ -72,40 +174,33 @@ function connectWs() {
         try {
             message = JSON.parse(event.data);
         } catch (e) {
-            console.log("Raw message:", event.data);
             return;
         }
 
         switch (message.type) {
+            case 'ping':
+                const rtt = Math.round(performance.now() - lastPingTime);
+                const latVal = document.getElementById("latency-value");
+                if (latVal) latVal.innerText = rtt;
+                break;
             case 'bind':
                 if (!message.targetId) {
                     connectionId = message.clientId;
-                    console.log("Received clientId: " + message.clientId);
                     qrcodeImg.clear();
                     qrcodeImg.makeCode("https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#" + wsUrl + connectionId);
                 } else {
-                    if (message.clientId != connectionId) {
-                        console.error('Received incorrect target message', message.message);
-                        return;
-                    }
+                    if (message.clientId != connectionId) return;
                     targetWSId = message.targetId;
                     updateStatusUI("Connected");
-                    console.log("Received targetId: " + message.targetId + " msg: " + message.message);
                     hideqrcode();
                 }
                 break;
             case 'break':
                 if (message.targetId != targetWSId) return;
-                showToast("The other party has disconnected, code: " + message.message);
-                // Instead of reload, we just reset the state
+                showToast("The other party has disconnected");
                 targetWSId = "";
                 updateStatusUI("Disconnected");
                 showqrcode();
-                break;
-            case 'error':
-                if (message.targetId != targetWSId) return;
-                console.error("Server error:", message);
-                showToast(message.message);
                 break;
             case 'msg':
                 if (message.message.includes("strength")) {
@@ -123,12 +218,19 @@ function connectWs() {
                         softBStrength = numbers[3];
                         sendWsMsg({ type: 4, message: `strength-2+2+${numbers[3]}` });
                     }
+                } else if (message.message.includes("pulse-")) {
+                    // Update visualizer when outgoing pulse is detected (simulated feedback)
+                    const parts = message.message.split(':');
+                    const channel = parts[0].replace('pulse-', '');
+                    try {
+                        const hexArray = JSON.parse(parts[1]);
+                        updateWaveformData(channel, hexArray);
+                    } catch(e) {}
                 } else if (message.message.includes("feedback")) {
                     showSuccessToast(feedBackMsg[message.message]);
                 }
                 break;
             case 'heartbeat':
-                console.log("Received heartbeat");
                 if (targetWSId !== '') {
                     const light = document.getElementById("status-light");
                     light.style.color = '#00ff37';
@@ -138,61 +240,56 @@ function connectWs() {
                 }
                 break;
             default:
-                console.log("Received other message: " + JSON.stringify(message));
                 break;
         }
     };
 
     wsConn.onerror = function (event) {
-        console.error("WebSocket connection error occurred");
         updateStatusUI("Connection Error", true);
     };
 
     wsConn.onclose = function (event) {
-        console.log("WebSocket connection closed");
         updateStatusUI("Disconnected");
-        
-        // Auto-reconnect logic
+        stopPing();
         if (reconnectAttempts < maxReconnectAttempts) {
             const delay = baseReconnectDelay * Math.pow(2, reconnectAttempts);
             reconnectAttempts++;
-            console.log(`Attempting to reconnect in ${delay}ms... (Attempt ${reconnectAttempts})`);
             updateStatusUI(`Reconnecting (${reconnectAttempts})...`);
             setTimeout(connectWs, delay);
         } else {
-            showToast("Maximum reconnection attempts reached. Please refresh the page.");
+            showToast("Maximum reconnection attempts reached.");
         }
     };
 }
 
-// Auto connect
 connectWs();
 
 function sendWsMsg(messageObj) {
-    if (!wsConn || wsConn.readyState !== WebSocket.OPEN) {
-        console.warn("Cannot send message: WebSocket is not open.");
-        return;
-    }
+    if (!wsConn || wsConn.readyState !== WebSocket.OPEN) return;
     messageObj.clientId = connectionId;
     messageObj.targetId = targetWSId;
     if (!messageObj.hasOwnProperty('type')) messageObj.type = "msg";
+    
+    // Intercept pulse messages for local visualization
+    if (messageObj.type === "clientMsg" && messageObj.message) {
+        const channel = messageObj.channel;
+        const hexStr = messageObj.message.split(':')[1];
+        try {
+            const hexArray = JSON.parse(hexStr);
+            updateWaveformData(channel, hexArray);
+        } catch(e) {}
+    }
+    
     wsConn.send(JSON.stringify(messageObj));
 }
 
 function addOrIncrease(type, channelIndex, strength) {
     const channelElement = document.getElementById(channelIndex === 1 ? "channel-a" : "channel-b");
     let currentValue = parseInt(channelElement.innerText);
-
-    if (type === 3) {
-        currentValue = 0;
-    } else if (type === 1) {
-        currentValue = Math.max(currentValue - strength, 0);
-    } else if (type === 2) {
-        currentValue = Math.min(currentValue + strength, 200);
-    }
-
-    const data = { type, strength: currentValue, message: "set channel", channel: channelIndex };
-    sendWsMsg(data);
+    if (type === 3) currentValue = 0;
+    else if (type === 1) currentValue = Math.max(currentValue - strength, 0);
+    else if (type === 2) currentValue = Math.min(currentValue + strength, 200);
+    sendWsMsg({ type, strength: currentValue, message: "set channel", channel: channelIndex });
 }
 
 function clearAB(channelIndex) {
@@ -212,42 +309,28 @@ function autoAddStrength(channelId, inputId, currentId, follow) {
 
 function sendCustomMsg() {
     if (fangdouSetTimeOut) return;
-
     autoAddStrength(1, "failed-a", "channel-a", followAStrength);
     autoAddStrength(2, "failed-b", "channel-b", followBStrength);
-
     const selectA = document.getElementById("wave-a").value;
     const selectB = document.getElementById("wave-b").value;
     const timeA = parseInt(document.getElementById("time-a").value, 10);
     const timeB = parseInt(document.getElementById("time-b").value, 10);
-
     sendWsMsg({ type: "clientMsg", message: `A:${waveData[selectA]}`, time: timeA, channel: "A" });
     sendWsMsg({ type: "clientMsg", message: `B:${waveData[selectB]}`, time: timeB, channel: "B" });
-
-    fangdouSetTimeOut = setTimeout(() => {
-        fangdouSetTimeOut = null;
-    }, fangdou);
+    fangdouSetTimeOut = setTimeout(() => { fangdouSetTimeOut = null; }, fangdou);
 }
 
-function showToast(message) {
-    new Notyf().error(message);
-}
-
-function showSuccessToast(message) {
-    new Notyf().success(message);
-}
+function showToast(message) { new Notyf().error(message); }
+function showSuccessToast(message) { new Notyf().success(message); }
 
 function toggleSwitch(id) {
     const container = document.getElementById(id);
     container.classList.toggle('on');
     const switchState = container.classList.contains('on');
-    
     if (id === 'toggle1') followAStrength = switchState;
     else followBStrength = switchState;
-
     const currentStrength = parseInt(document.getElementById(id === 'toggle1' ? 'channel-a' : 'channel-b').innerText);
     const currentSoft = parseInt(document.getElementById(id === 'toggle1' ? 'soft-a' : 'soft-b').innerText);
-
     if (switchState && currentStrength !== currentSoft) {
         const channel = id === 'toggle1' ? 1 : 2;
         sendWsMsg({ type: 4, message: `strength-${channel}+2+${currentSoft}` });
@@ -256,7 +339,6 @@ function toggleSwitch(id) {
 
 function connectOrDisconn() {
     if (wsConn && wsConn.readyState === WebSocket.OPEN) {
-        // User manually requested disconnect - stop auto-reconnect
         reconnectAttempts = maxReconnectAttempts; 
         wsConn.close();
         showToast("Disconnected by user");
