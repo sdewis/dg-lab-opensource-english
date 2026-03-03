@@ -1,4 +1,6 @@
-## SOCKET Control - Control End Open Source
+## SOCKET Control - Control End Open Source (BETA)
+
+> **Note:** The recent additions including **Docker Support**, **Latency Monitoring**, and **Real-time Waveform Visualization** are currently in **BETA** and have not been field-tested with DG-LAB hardware.
 
 ### Update
 

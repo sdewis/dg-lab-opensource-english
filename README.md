@@ -1,4 +1,6 @@
-# DG-LAB Open Source
+# DG-LAB Open Source (BETA)
+
+> **⚠️ WARNING:** This repository contains experimental code and features (Docker support, Latency monitoring, Waveform visualization) that are currently in **BETA**. These changes have not been fully tested with hardware yet. Use with caution.
 
 DG-LAB devices are recognised and loved by friends worldwide, and many friends hope our devices can be integrated into more scenarios. For this reason, we are sharing the representative Bluetooth protocols of DG-LAB devices in open source. You can integrate DG-LAB devices into your own entertainment scenarios through countless other programming methods.
 
