@@ -1,28 +1,28 @@
-var connectionId = ""; // 从接口获取的连接标识符
+var connectionId = ""; // Connection identifier obtained from the interface
 
-var targetWSId = ""; // 发送目标
+var targetWSId = ""; // Sending target
 
-var fangdou = 500; //500毫秒防抖
+var fangdou = 500; //500ms debounce
 
-var fangdouSetTimeOut; // 防抖定时器
+var fangdouSetTimeOut; // Debounce timer
 
-let followAStrength = false; //跟随AB软上限
+let followAStrength = false; //Follow AB soft upper limit
 
 let followBStrength = false;
 
-var wsConn = null; // 全局ws链接
+var wsConn = null; // Global ws link
 
 const feedBackMsg = {
-    "feedback-0": "A通道：○",
-    "feedback-1": "A通道：△",
-    "feedback-2": "A通道：□",
-    "feedback-3": "A通道：☆",
-    "feedback-4": "A通道：⬡",
-    "feedback-5": "B通道：○",
-    "feedback-6": "B通道：△",
-    "feedback-7": "B通道：□",
-    "feedback-8": "B通道：☆",
-    "feedback-9": "B通道：⬡",
+    "feedback-0": "Channel A: ○",
+    "feedback-1": "Channel A: △",
+    "feedback-2": "Channel A: □",
+    "feedback-3": "Channel A: ☆",
+    "feedback-4": "Channel A: ⬡",
+    "feedback-5": "Channel B: ○",
+    "feedback-6": "Channel B: △",
+    "feedback-7": "Channel B: □",
+    "feedback-8": "Channel B: ☆",
+    "feedback-9": "Channel B: ⬡",
 }
 
 const waveData = {
@@ -35,7 +35,7 @@ function connectWs() {
     wsConn = new WebSocket("ws://12.34.56.78:9999/");
     //wsConn = new WebSocket("ws://localhost:9999/");
     wsConn.onopen = function (event) {
-        console.log("WebSocket连接已建立");
+        console.log("WebSocket connection established");
     };
 
     wsConn.onmessage = function (event) {
@@ -52,43 +52,43 @@ function connectWs() {
         switch (message.type) {
             case 'bind':
                 if (!message.targetId) {
-                    //初次连接获取网页wsid
-                    connectionId = message.clientId; // 获取 clientId
-                    console.log("收到clientId：" + message.clientId);
+                    //Initial connection to get webpage wsid
+                    connectionId = message.clientId; // Get clientId
+                    console.log("Received clientId:" + message.clientId);
                     qrcodeImg.clear();
                     qrcodeImg.makeCode("https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#ws://12.34.56.78:9999/" + connectionId);
                     //qrcodeImg.makeCode("https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#ws://192.168.3.235:9999/" + connectionId);
                 }
                 else {
                     if (message.clientId != connectionId) {
-                        alert('收到不正确的target消息' + message.message)
+                        alert('Received incorrect target message' + message.message)
                         return;
                     }
                     targetWSId = message.targetId;
-                    document.getElementById("status").innerText = "已连接";
+                    document.getElementById("status").innerText = "Connected";
                     document.getElementById("status").classList.remove("red");
                     document.getElementById("status-light").classList.remove("red");
-                    document.getElementById("status-btn").innerText = "断开";
+                    document.getElementById("status-btn").innerText = "Disconnect";
                     document.getElementById("status-btn").classList.add("red-background");
-                    console.log("收到targetId: " + message.targetId + "msg: " + message.message);
+                    console.log("Received targetId: " + message.targetId + "msg: " + message.message);
                     hideqrcode();
                 }
                 break;
             case 'break':
-                //对方断开
+                //对方Disconnect
                 if (message.targetId != targetWSId)
                     return;
-                showToast("对方已断开，code:" + message.message)
+                showToast("对方已Disconnect，code:" + message.message)
                 location.reload();
                 break;
             case 'error':
                 if (message.targetId != targetWSId)
                     return;
-                console.log(message); // 输出错误信息到控制台
-                showToast(message.message); // 弹出错误提示框，显示错误消息
+                console.log(message); // Output error information to console
+                showToast(message.message); // Pop up error prompt box, display error message
                 break;
             case 'msg':
-                // 定义一个空数组来存储结果
+                // Define an empty array to store the result
                 const result = [];
                 if (message.message.includes("strength")) {
                     const numbers = message.message.match(/\d+/g).map(Number);
@@ -99,8 +99,8 @@ function connectWs() {
                     document.getElementById("soft-b").innerText = numbers[3];
 
                     if (followAStrength && numbers[2] !== numbers[0]) {
-                        //开启跟随软上限  当收到和缓存不同的软上限值时触发自动设置
-                        softAStrength = numbers[2]; // 保存 避免重复发信
+                        //Enable follow soft upper limit. Triggers automatic setting when receiving a soft upper limit value different from the cache
+                        softAStrength = numbers[2]; // Save to avoid repeated message sending
                         const data1 = { type: 4, message: `strength-1+2+${numbers[2]}` }
                         sendWsMsg(data1);
                     }
@@ -115,36 +115,36 @@ function connectWs() {
                 }
                 break;
             case 'heartbeat':
-                //心跳包
-                console.log("收到心跳");
+                //Heartbeat packet
+                console.log("Received heartbeat");
                 if (targetWSId !== '') {
-                    // 已连接上
+                    // Connected上
                     const light = document.getElementById("status-light");
                     light.style.color = '#00ff37';
 
-                    // 1秒后将颜色设置回 #ffe99d
+                    // Set color back to #ffe99d after 1 second
                     setTimeout(() => {
                         light.style.color = '#ffe99d';
                     }, 1000);
                 }
                 break;
             default:
-                console.log("收到其他消息：" + JSON.stringify(message)); // 输出其他类型的消息到控制台
+                console.log("Received other message: " + JSON.stringify(message)); // Output other types of messages to console
                 break;
         }
     };
 
     wsConn.onerror = function (event) {
-        console.error("WebSocket连接发生错误");
-        // 在这里处理连接错误的情况
+        console.error("WebSocket connection error occurred");
+        // Handle the situation of connection error here
     };
 
     wsConn.onclose = function (event) {
-        showToast("连接已断开");
+        showToast("连接已Disconnect");
     };
 }
 
-// 自动链接
+// Auto connect
 connectWs();
 
 function sendWsMsg(messageObj) {
@@ -162,26 +162,26 @@ function toggleSwitch(id) {
 }
 
 function addOrIncrease(type, channelIndex, strength) {
-    // 1 减少一  2 增加一  3 设置到
+    // 1 decrease by one 2 increase by one 3 set to
     // channel:1-A    2-B
-    // 获取当前频道元素和当前值
+    // Get current channel element and current value
     const channelElement = document.getElementById(channelIndex === 1 ? "channel-a" : "channel-b");
     let currentValue = parseInt(channelElement.innerText);
 
-    // 如果是设置操作
+    // If it is a set operation
     if (type === 3) {
-        currentValue = 0; //固定为0
+        currentValue = 0; //Fixed to 0
     }
-    // 减少一
+    // Decrease by one
     else if (type === 1) {
         currentValue = Math.max(currentValue - strength, 0);
     }
-    // 增加一
+    // Increase by one
     else if (type === 2) {
         currentValue = Math.min(currentValue + strength, 200);
     }
 
-    // 构造消息对象并发送
+    // Construct message object and send
     const data = { type, strength: currentValue, message: "set channel", channel: channelIndex };
     console.log(data)
     sendWsMsg(data);
@@ -193,7 +193,7 @@ function clearAB(channelIndex) {
 }
 
 function autoAddStrength(channelId, inputId, currentId, follow) {
-    // 检查是否开启跟随软上限
+    // Check whether follow soft upper limit is enabled
     if (!follow) {
         let addStrength = parseInt(document.getElementById(inputId).value, 10);
         let currentStrength = parseInt(document.getElementById(currentId).innerText, 10);
@@ -210,8 +210,8 @@ function sendCustomMsg() {
         return;
     }
 
-    autoAddStrength(1, "failed-a", "channel-a", followAStrength); // 给A通道加强度
-    autoAddStrength(2, "failed-b", "channel-b", followBStrength); // 给B通道加强度
+    autoAddStrength(1, "failed-a", "channel-a", followAStrength); // Increase intensity for channel A
+    autoAddStrength(2, "failed-b", "channel-b", followBStrength); // Increase intensity for channel B
 
     const selectA = document.getElementById("wave-a").value;
     const selectB = document.getElementById("wave-b").value;
@@ -247,7 +247,7 @@ function showSuccessToast(message) {
 }
 
 function toggleSwitch(id) {
-    // 获取开关元素 并切换开关状态
+    // Get switch element and toggle switch state
     const container = document.getElementById(id);
     container.classList.toggle('on');
     const switch1State = container.classList.contains('on');
@@ -260,8 +260,8 @@ function toggleSwitch(id) {
     console.log(switch1State + '@' + currentStrength + '@' + currentSoft)
 
     if (switch1State && currentStrength !== currentSoft) {
-        //马上判断是否和软上限符合
-        console.log('不符合 马上变化')
+        //Immediately judge whether it complies with the soft upper limit
+        console.log('Does not comply, change immediately')
         const channel = id === 'toggle1' ? 1 : 2;
         const data = { type: 4, message: `strength-${channel}+2+${currentSoft}` }
         sendWsMsg(data);
@@ -269,13 +269,13 @@ function toggleSwitch(id) {
 }
 
 function connectOrDisconn() {
-    // 如果未连接则显示二维码
+    // If not connected, display QR code
     if (wsConn && targetWSId === '') {
         showqrcode();
         return;
     } else {
         wsConn.close();
-        showToast("已断开连接");
+        showToast("已Disconnect连接");
         location.reload();
     }
 }

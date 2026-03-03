@@ -243,7 +243,7 @@ select {
 
 #qrcode-text p {
   white-space: pre-wrap;
-  /* 自动换行 */
+  /* Automatic word wrap */
 }
 
 .close-qrcode {
@@ -471,7 +471,7 @@ select {
   border-radius: 13px;
   cursor: pointer;
   -webkit-flex-shrink: 0;
-  /* Safari 和 Chrome */
+  /* Safari and Chrome */
   -ms-flex-negative: 0;
   /* IE 10+ */
   flex-shrink: 0;
@@ -519,7 +519,7 @@ select {
   padding: 5px;
   border-radius: 4px;
   display: none;
-  /* 默认隐藏 */
+  /* Default hidden */
   z-index: 1000;
 }
 

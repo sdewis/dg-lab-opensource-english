@@ -1,24 +1,24 @@
-0. 以下代码适用于Linux服务器，使用Node官网的linux包管理下载
+0. The following code applies to a Linux server, downloading via the Node official website's Linux package manager
 https://nodejs.org/en/download/package-manager
 
-推荐使用NVM安装
+NVM installation is recommended.
 
-根据官网的命令行提示选择并安装Node18及以上版本（推荐安装后缀LTS的版本）
+Follow the command line prompts on the official website to select and install Node version 18 or above (LTS version recommended).
 
-逐行复制页面中的Linux命令到服务器中执行，等待提示完成之后，查看安装的版本是否正确，那之后请重启命令窗口或远程窗口。
+Copy and execute the Linux commands from the page line by line into the server, wait for the prompt to complete, check if the installed version is correct, then restart the command window or remote window.
 
-接下来使用npm 安装必要的后台运行环境：
+Next, use npm to install the necessary background runtime environment:
 
 1. npm i ws -g
-全局安装websocket for node 插件，让node支持websocket协议，若后续第6步使用pm2运行程序失败，则使用cd命令进入第6步的文件夹中使用npm i ws来将插件单独配置到此文件夹中。
+Install the websocket for node plugin globally, allowing node to support the websocket protocol. If running the program using pm2 in step 6 fails later, use the cd command to enter the folder from step 6 and use npm i ws to configure the plugin specifically to this folder.
 
 2. npm i pm2 -g
-全局安装PM2，由于node程序不支持后台运行，而且使用linux自带后台运行是不可靠的，推荐使用PM2来托管你的程序在后台运行（支持程序崩溃时自动重启）
+Install PM2 globally. Because node programs do not support background running natively, and using Linux's built-in background running is unreliable, it is recommended to use PM2 to host your program running in the background (supports automatic restart when the program crashes).
 
-3. 在目录中创建存放服务端代码的文件夹（例如：www/myws） 并将websocketNode.js文件放进去
+3. Create a folder in the directory to store the server-side code (for example: www/myws) and place the websocketNode.js file in it.
 
-4. 使用cd命令进入你的文件夹（例如：cd www/myws）
+4. Use the cd command to enter your folder (for example: cd www/myws).
 
-5. 执行命令 npx pm2 start websocketNode.js 即可看到运行提示
-如果你需要查看运行过程中打印的log日志，可以在运行代码之后，在此目录下命令行中输入npx pm2 log 0  并回车来查看
-（通常情况下你只有一个程序的情况id就是0，如果你运行了多个程序，在执行start命令之后，命令行会显示你本次任务的id，将命令最后的0修改成对应id即可）
+5. Execute the command npx pm2 start websocketNode.js to see the running prompt.
+If you need to view the log printed during operation, you can enter npx pm2 log 0 in the command line in this directory and press enter to view after running the code.
+(Normally, if you only have one program, the id is 0. If you run multiple programs, after executing the start command, the command line will display the id of your current task. Change the 0 at the end of the command to the corresponding id.)

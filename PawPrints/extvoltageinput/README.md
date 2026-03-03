@@ -1,62 +1,62 @@
-# 外部电压检测的解释与使用示例
+# Explanation and Usage Examples of External Voltage Detection
 
-本文介绍按钮配件功能中的“外部电压检测触发”功能，帮助广大郊狼爱好者更方便地扩展个性化玩法。
+This document introduces the "external voltage detection trigger" function in the button accessory features, helping Coyote enthusiasts more easily expand personalised gameplay.
 
-外部电压检测触发是一个实验性（尚未完善的附赠功能）进阶用法，这意味着本功能涉及了部分专业技能。为了您能顺利且安全地使用，需要准备至少以下的工具：万用表、导线、Type-C USB C-C连接线、最大阻值20KΩ左右的的电位器、电工绝缘胶带。
+External voltage detection triggering is an experimental (yet to be perfected bonus feature) advanced usage, which means this function involves some professional skills. To use it smoothly and safely, you need to prepare at least the following tools: a multimeter, wires, a Type-C USB C-C connection cable, a potentiometer with a maximum resistance of about 20KΩ, and electrical insulation tape.
 
-## 基础简介与概念解释
+## Basic Introduction and Concept Explanation
 
-“外部电压检测触发”功能允许通过外部电压信号来触发设定的事件，基于主控芯片自带的ADC按键功能实现。 本文所述外部电压的输入是复用了6P Type-C接口中的“CC1引脚”，通过内置的分压电路后连接到ADC。
+The "external voltage detection trigger" function allows setting events to be triggered by an external voltage signal, implemented based on the built-in ADC button function of the main control chip. The input of the external voltage described in this article multiplexes the "CC1 pin" in the 6P Type-C interface, which is connected to the ADC through a built-in voltage divider circuit.
 
-我们通过主控芯片的ADC按键功能检测CC1到GND之间的电压，量程0~2.1V划分为30个档位（0.07V分辨率），误差±5%。  需要注意：在使用时避免给按钮充电、注意连接极性，硬件耐压上限3.0V。使用前请务必先检查电路线路是否已正确连接、电压与极性都符合要求，不恰当的使用可能会造成设备损坏甚至造成危险。
+We detect the voltage between CC1 and GND through the ADC button function of the main control chip. The range of 0~2.1V is divided into 30 levels (0.07V resolution) with an error of ±5%. Note: when in use, avoid charging the button, pay attention to the connection polarity, and the hardware withstand voltage limit is 3.0V. Before use, please be sure to check whether the circuit wiring is connected correctly and whether the voltage and polarity meet the requirements. Improper use may cause device damage or even danger.
 
-* 注：ADC按键适用于数字开关量，如果用于测量模拟电压则会有较大误差，强烈建议按开关量设计。
+* Note: The ADC button is suitable for digital switching values. If used to measure analogue voltage, there will be a large error. It is strongly recommended to design it according to the switching value.
 
-## 电压检测模式设计说明
+## Voltage Detection Mode Design Instructions
 
-电压传感器设计了“高电平”（使用内置上拉）与“高阻态”（不使用内置上拉）两种检测模式，默认使用“高电平”即内置上拉模式。
+The voltage sensor is designed with two detection modes: "High Level" (using built-in pull-up) and "High Impedance State" (not using built-in pull-up). The default is "High Level", i.e., built-in pull-up mode.
 
-默认的“高电平”模式提供了一个内部的上拉电平，它通过10K电阻连接到外部电压检测引脚（CC1），并通过4.8K电阻接地。当检测口悬空未连接时，外部电压检测引脚的电压在1V左右。使用此模式您只需要在外部电压检测引脚和地之间设置一个可变的电阻或者开关按钮即可改变电压值，无需电源。  您也可以选用“高阻态”模式，这个模式断开了内部上拉，此时外部电压检测引脚（CC1）仅通过4.8K电阻接地而不会向外输出。使用此模式需要您提供电压源（包括但不限于硅光电池、手摇发电机、干电池）并根据您的玩法需求设计电路，还需要注意分压与箝位。
+The default "High Level" mode provides an internal pull-up level, which is connected to the external voltage detection pin (CC1) via a 10K resistor and grounded via a 4.8K resistor. When the detection port is floating and not connected, the voltage of the external voltage detection pin is about 1V. Using this mode, you only need to set a variable resistor or a switch button between the external voltage detection pin and ground to change the voltage value without a power supply. You can also choose the "High Impedance State" mode. This mode disconnects the internal pull-up. At this time, the external voltage detection pin (CC1) is only grounded via a 4.8K resistor and will not output externally. Using this mode requires you to provide a voltage source (including but not limited to silicon photocells, hand-crank generators, dry batteries) and design the circuit according to your gameplay needs, whilst also paying attention to voltage division and clamping.
 
-在完成电路设置后，您可在APP中根据您的玩法需求设置“目标电压范围”与“参数映射范围”。  根据您的玩法，设置期望的电压范围，如果实际电压不在目标范围就会触发设定的事件，并且实际电压与设置的范围偏离得越远则“参数”也越大（如果您设置了“参数映射范围”）。
+After completing the circuit setup, you can set the "Target Voltage Range" and "Parameter Mapping Range" in the APP according to your gameplay needs. Depending on your gameplay, set the expected voltage range. If the actual voltage is not in the target range, it will trigger the set event, and the further the actual voltage deviates from the set range, the larger the "parameter" will be (if you have set the "Parameter Mapping Range").
 
-## 用法示例
+## Usage Examples
 
-电压信号作为最常用的信息载体，外部电压的来源可以是各种各样的传感器，您可以自由发挥您的创意想法实现个性玩法。 这些传感器可以是现成的产品，例如：光敏电阻、麦克风咪头、测距模块等；也可以是自己手工自制的，例如：给仓鼠跑步机增加小马达、在电位器上绕弹簧、在水杯上贴铜箔胶带等。
+Voltage signals being the most commonly used information carriers, the source of external voltage can be various sensors, and you can freely use your creative ideas to realise personalised gameplay. These sensors can be off-the-shelf products, such as: photoresistors, microphone pickups, distance measurement modules, etc.; or they can be self-made, such as: adding a small motor to a hamster treadmill, winding a spring on a potentiometer, sticking copper foil tape on a water cup, etc.
 
-从按钮连接到传感器使用市面上现成的成品Type-C USB C-C连接线线缆，您可以根据实际情况选择使用现成的转接器或者直接剪断后自行接线。关于“CC1引脚”与“GND引脚”的线序位置可参考网络上的资料，例如[Type-C硬件接口引脚定义](https://baike.baidu.com/item/USB%20Type-C?fromtitle=Type-C&fromid=16565336&fromModule=lemma_search-box#3)，下文中的“Demo功能测试”部分也会展示线缆到传感器的连接方法。
+Connecting the button to the sensor uses an off-the-shelf finished Type-C USB C-C connection cable available on the market. You can choose to use a ready-made adapter or directly cut it and wire it yourself according to the actual situation. Regarding the wire sequence position of the "CC1 pin" and "GND pin", you can refer to information on the internet, such as [Type-C Hardware Interface Pin Definition](https://baike.baidu.com/item/USB%20Type-C?fromtitle=Type-C&fromid=16565336&fromModule=lemma_search-box#3). The "Demo Function Test" section below will also show the connection method from the cable to the sensor.
 
-需要留意：由于Type-C是双面可插，一个方向连的是CC1而另一个方向是连的CC2，所以需要留意插接方向。另外：不建议通过线芯颜色区分线序，因为颜色跟生产厂商有关并非固定。 一个相对简单的找线方法：使用旅行锁并确保按钮处于旅行状态（灯熄灭且不响应按键）将线缆插头插入按钮，使用万用表的电阻档依次测量各个线芯到GND（通常是黑色的粗线）的电阻值，只有CC1的阻值在4.6KΩ附近（如果测量到5.1KΩ左右请换一个方向插接）。
+Please note: Because Type-C can be plugged in on both sides, one direction is connected to CC1 and the other direction is connected to CC2, so you need to pay attention to the plugging direction. Additionally: it is not recommended to distinguish the wire sequence by the core colour, as the colour depends on the manufacturer and is not fixed. A relatively simple method to find the wire: use the travel lock and ensure the button is in the travel state (the light is off and does not respond to button presses), plug the cable into the button, and use the resistance gear of a multimeter to measure the resistance value of each core to GND (usually a thick black wire) in turn. Only CC1 has a resistance of around 4.6KΩ (if you measure around 5.1KΩ, please plug it in the other direction).
 
-在使用或者自制传感器时请注意安全，在正式使用前先用电位器或者实验电源进行功能测试与安全确认。
+Please pay attention to safety when using or making your own sensors. Before official use, please conduct a function test and safety confirmation with a potentiometer or experimental power supply.
 
-以下举例几种实际使用案例供您参考。
+Here are a few actual use cases for your reference.
 
-### Demo功能测试
+### Demo Function Test
 
-这个示例是最小化的功能演示，不涉及具体用法，仅需连接电缆与电位器即可开始测试，仅作为功能测试展示。  强烈建议您在正式使用本功能之前先做一次“Demo功能测试”以确保功能完整可靠。
+This example is a minimalist function demonstration, not involving specific usage. You only need to connect the cable and potentiometer to start the test, and it serves solely as a function test demonstration. It is strongly recommended that you perform a "Demo Function Test" before officially using this function to ensure the function is complete and reliable.
 
-#### 硬件组成与安装
+#### Hardware Composition and Installation
 
-在这个示例中，我们仅使用市面最常见的一款电位器元件和一条常规的Type-C USB C-C连接线做功能演示。这里我们出于展示方便，采用直接剪断现成线缆后自行接线的方式。  本例使用的素材如照片所示。
-![项目结构](/PawPrints/img/img1.JPEG)
-在剪断线缆后首先使用万用表对照着USB-Type-C插头引出端视图找到“CC”与“GND”，将其引出备用，然后妥善包扎好其他未使用的线芯。
+In this example, we only use the most common potentiometer component on the market and a standard Type-C USB C-C connection cable for function demonstration. For convenience of demonstration, we adopt the method of directly cutting the ready-made cable and wiring it ourselves. The materials used in this example are as shown in the photo.
+![Project Structure](/PawPrints/img/img1.JPEG)
+After cutting the cable, first use a multimeter and refer to the Type-C plug output end view to find "CC" and "GND", lead them out for standby, and then properly wrap the other unused wire cores.
 
-将“CC”连接到电位器的抽头、“GND”连接电位器任意一侧，插入USB接口至按钮即完成安装。
-![项目结构](/PawPrints/img/img2.JPEG)
+Connect "CC" to the tap of the potentiometer and "GND" to either side of the potentiometer, insert the USB interface into the button, and the installation is complete.
+![Project Structure](/PawPrints/img/img2.JPEG)
 
-#### APP设置
+#### APP Settings
 
-首先确保已经按照APP指引正确绑定了您的按钮，按钮的眼灯颜色与APP展示的配件颜色一致。
+First, ensure that your button is correctly bound according to the APP guidelines, and the colour of the button's eye light is consistent with the accessory colour displayed in the APP.
 
-点击添加配件玩法，在对应的按钮处添加“外部电压检测触发”，测量模式保持默认的“高电平”（因为电位器需要按钮提供电源，使用按钮内置的上拉）。此时如果您的电位器拧到最大阻值（20KΩ），则电压约为0.92V。 接下来根据您的偏好设置“目标电压范围”和“参数映射范围”以及“强度临时改变”的强度。  例如：“目标电压范围”0.49V ~ 0.84V、“参数映射范围”0.35V（旧版本APP是使用0至255表示，对应43）、“强度临时改变”设置为“参数决定”并调整强度为+1 ~ +40。
+Click to add accessory gameplay, and add "External Voltage Detection Trigger" at the corresponding button. The measurement mode keeps the default "High Level" (because the potentiometer requires the button to provide power, use the button's built-in pull-up). At this point, if your potentiometer is turned to the maximum resistance (20KΩ), the voltage is about 0.92V. Next, set the "Target Voltage Range" and "Parameter Mapping Range" as well as the intensity of the "Temporary Intensity Change" according to your preference. For example: "Target Voltage Range" 0.49V ~ 0.84V, "Parameter Mapping Range" 0.35V (older versions of the APP use 0 to 255 to represent, corresponding to 43), "Temporary Intensity Change" is set to "Parameter Determined" and adjust the intensity to +1 ~ +40.
 
-![项目结构](/PawPrints/img/img3.jpeg)
+![Project Structure](/PawPrints/img/img3.jpeg)
 
-保存设置后，按照APP指引启动通道输出即可开始测试。
+After saving the settings, start the channel output according to the APP guidelines to begin testing.
 
-#### 效果
+#### Effect
 
-随着电位器从一端拧到另一端，按钮的触发状态会依次呈现：触发——未触发——触发的变化，同时输出强度也会跟随实际电压值与设置的目标电压范围的差距而从40到0再到40（由于ADC测量误差，这个参数数值不是连续的且有误差）的变化。  
+As the potentiometer is turned from one end to the other, the trigger state of the button will successively present: Triggered - Untriggered - Triggered changes. At the same time, the output intensity will also change from 40 to 0 and then to 40 following the gap between the actual voltage value and the set target voltage range (due to ADC measurement error, this parameter value is not continuous and has errors).
 
-![项目结构](/PawPrints/img/img4.jpeg)
+![Project Structure](/PawPrints/img/img4.jpeg)

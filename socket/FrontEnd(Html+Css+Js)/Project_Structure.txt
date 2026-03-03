@@ -1,0 +1,13 @@
+assets - Animation assets
+index.css - Page styles
+index.html - Main page entry (double click to open)
+index.js - Game js script
+
+notyf.min.css - Prompt styles
+notyf.min.js - Prompt js script
+
+qrcode.min.js - QR code generation js plugin
+
+qusetion.svg - Question mark image
+
+wsConnection.js - Main websocket js logic

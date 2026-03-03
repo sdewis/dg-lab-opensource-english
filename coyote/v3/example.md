@@ -1,7 +1,7 @@
-## APP中内置的波形转换为V3格式
-（以下数据仅为一个通道数据，请根据蓝牙协议拼接成完整AB通道数据后使用）
+## Built-in Waveforms in APP Converted to V3 Format
+(The following data is only for one channel, please splice it into complete AB channel data according to the Bluetooth protocol before use)
 
-### 呼吸
+### Breathing
       freq = 10,strength = 0,bytes = 0A0A0A0A00000000
       freq = 10,strength = 20,bytes = 0A0A0A0A14141414
       freq = 10,strength = 40,bytes = 0A0A0A0A28282828
@@ -15,7 +15,7 @@
       freq = 10,strength = 0,bytes = 0A0A0A0A00000000
       freq = 10,strength = 0,bytes = 0A0A0A0A00000000
 
-### 潮汐
+### Tide
       freq = 10,strength = 0,bytes = 0A0A0A0A00000000
       freq = 11,strength = 16,bytes = 0B0B0B0B10101010
       freq = 13,strength = 33,bytes = 0D0D0D0D21212121

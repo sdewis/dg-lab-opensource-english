@@ -68,7 +68,7 @@
         this.images = {};
         this.imagesLoaded = 0;
 
-        // 已经停止的标志
+        // Flag for already stopped
         this.alreadyStop = false;
 
         if (this.isDisabled()) {
@@ -210,10 +210,10 @@
      * @enum {Object}
      */
     Runner.keycodes = {
-        JUMP: { '32': 1 },  // 空格 spacebar
-        DUCK: { '83': 1 },  // 趴下
-        RESTART: { '32': 1 },  // 空格
-        STOP: { '80': 1 }  // P作为停止快捷键
+        JUMP: { '32': 1 },  // Spacebar
+        DUCK: { '83': 1 },  // Duck
+        RESTART: { '32': 1 },  // Space
+        STOP: { '80': 1 }  // P as a stop shortcut
     };
 
 
@@ -680,8 +680,8 @@
          */
         onKeyDown: function (e) {
             if (wsConn == null || targetWSId === "") {
-                console.log("请先点击右上角的连接")
-                showToast("请先点击右上角的连接")
+                console.log("Please click connect in the top right corner first")
+                showToast("Please click connect in the top right corner first")
                 return;
             }
             const activeElement = document.activeElement;
@@ -756,16 +756,16 @@
             //     this.restart();
             // }
             if (this.alreadyStop && Runner.keycodes.RESTART[keyCode]) {
-                // 重启游戏
+                // Restart game
                 this.crashed = false;
                 this.alreadyStop = false;
                 this.restart();
-                this.messageBox.textContent = '按下P停止游戏'
+                this.messageBox.textContent = 'Press P to stop the game'
             }
             if (Runner.keycodes.STOP[keyCode] && !this.alreadyStop) {
-                //暂停游戏
+                //Pause game
                 this.enterGameOver();
-                this.messageBox.textContent = '按下空格开始游戏'
+                this.messageBox.textContent = '按下Space开始游戏'
             }
             // } else if (this.paused && isjumpKey) {
             //     // Reset the jump state
@@ -813,7 +813,7 @@
             }
             this.playSound(this.soundFx.HIT);
             vibrate(200);
-            this.messageBox.textContent = '按下P停止游戏';
+            this.messageBox.textContent = 'Press P to stop the game';
 
         },
 
@@ -823,7 +823,7 @@
         enterGameOver: function () {
             this.alreadyStop = true;
             this.stop();
-            this.crashed = true; //撞到过 可以重启
+            this.crashed = true; //Has crashed, can restart
             //this.distanceMeter.acheivement = false;
             if (this.distanceMeter?.achievement !== undefined) {
                 this.distanceMeter.achievement = false;

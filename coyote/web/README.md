@@ -1,7 +1,7 @@
-## 郊狼WEB蓝牙直连测试
+## Coyote WEB Bluetooth Direct Connection Test
 
-仅支持Chrome浏览器(谷歌浏览器)
+Only supports Chrome browser (Google Chrome)
 
-解压缩后，打开bluetooth.html 即可使用(请确保您的浏览器所在的设备蓝牙已打开)
+After unzipping, open bluetooth.html to use (please ensure the Bluetooth of the device where your browser is located is turned on)
 
-目前仅支持双通道同时播放波形，后续会持续更新
+Currently, it only supports dual channels playing waveforms simultaneously, and will be continuously updated in the future

@@ -1,1 +1,1 @@
-爪印配件相关资料
+Information related to PawPrints accessories

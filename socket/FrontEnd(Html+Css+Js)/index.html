@@ -18,36 +18,36 @@
     <div id="qrcode-overlay">
         <div id="qrcode-container">
             <div id="qrcode-text">
-                <p>使用DG-LAB APP扫码建立WebSocket链接</p>
+                <p>Use DG-LAB APP to scan code to establish WebSocket link</p>
             </div>
             <div id="qrcode"></div>
-            <div class="close-qrcode" onclick="hideqrcode()">关闭</div>
+            <div class="close-qrcode" onclick="hideqrcode()">Close</div>
         </div>
     </div>
     <div class="header-container">
         <div class="dg-controller">
             <div class="btn-container">
-                <!-- 小提示消息框 -->
+                <!-- Tooltip message box -->
                 <div class="tooltip" id="tooltip"></div>
 
-                <span>A通道: 当前强度:</span>
+                <span>Channel A: Current Intensity:</span>
                 <span id="channel-a">0</span>
-                <button onclick="addOrIncrease(1, 1, 1)"> 强度-1 </button>
-                <button onclick="addOrIncrease(2, 1, 1)"> 强度+1 </button>
-                <button onclick="addOrIncrease(3, 1)"> 强度置0 </button>
-                <span>软上限: </span><span id="soft-a">0</span>
-                <span>强度跟随软上限</span>
+                <button onclick="addOrIncrease(1, 1, 1)"> Intensity-1 </button>
+                <button onclick="addOrIncrease(2, 1, 1)"> Intensity+1 </button>
+                <button onclick="addOrIncrease(3, 1)"> Set Intensity to 0 </button>
+                <span>Soft Upper Limit: </span><span id="soft-a">0</span>
+                <span>Intensity follows soft limit</span>
                 <img src="question.svg" class="question-img" id="question1" />
                 <div class="toggle-container" id="toggle1" onclick="toggleSwitch('toggle1')">
                     <div class="toggle-switch"></div>
                 </div>
-                <span>波形</span>
+                <span>Waveform</span>
                 <select id="wave-a">
-                    <option value="1">波形A</option>
-                    <option value="2">波形B</option>
-                    <option value="3">波形C</option>
+                    <option value="1">Waveform A</option>
+                    <option value="2">Waveform B</option>
+                    <option value="3">Waveform C</option>
                 </select>
-                <span>失败增加强度</span>
+                <span>Intensity increase on failure</span>
                 <img src="question.svg" class="question-img" id="question2" />
                 <select id="failed-a">
                     <option value="0" selected>+0</option>
@@ -62,41 +62,41 @@
                     <option value="9">+9</option>
                     <option value="10">+10</option>
                 </select>
-                <span>输出时长</span>
+                <span>Output Duration</span>
                 <select id="time-a">
-                    <option value="1">1秒</option>
-                    <option value="2">2秒</option>
-                    <option value="3">3秒</option>
-                    <option value="4">4秒</option>
-                    <option value="5" selected>5秒</option>
-                    <option value="6">6秒</option>
-                    <option value="7">7秒</option>
-                    <option value="8">8秒</option>
-                    <option value="9">9秒</option>
-                    <option value="10">10秒</option>
+                    <option value="1">1 second</option>
+                    <option value="2">2 seconds</option>
+                    <option value="3">3 seconds</option>
+                    <option value="4">4 seconds</option>
+                    <option value="5" selected>5 seconds</option>
+                    <option value="6">6 seconds</option>
+                    <option value="7">7 seconds</option>
+                    <option value="8">8 seconds</option>
+                    <option value="9">9 seconds</option>
+                    <option value="10">10 seconds</option>
                 </select>
-                <button onclick="clearAB(1)"> 清除当前波形队列 </button>
+                <button onclick="clearAB(1)"> 清除当前Waveform队列 </button>
                 <img src="question.svg" class="question-img" id="question3" />
             </div>
             <div class="btn-container">
-                <span>B通道: 当前强度:</span>
+                <span>Channel B: Current Intensity:</span>
                 <span id="channel-b">0</span>
-                <button onclick="addOrIncrease(1, 2, 1)"> 强度-1 </button>
-                <button onclick="addOrIncrease(2, 2, 1)"> 强度+1 </button>
-                <button onclick="addOrIncrease(3, 2)"> 强度置0 </button>
-                <span>软上限: </span><span id="soft-b">0</span>
-                <span>强度跟随软上限</span>
+                <button onclick="addOrIncrease(1, 2, 1)"> Intensity-1 </button>
+                <button onclick="addOrIncrease(2, 2, 1)"> Intensity+1 </button>
+                <button onclick="addOrIncrease(3, 2)"> Set Intensity to 0 </button>
+                <span>Soft Upper Limit: </span><span id="soft-b">0</span>
+                <span>Intensity follows soft limit</span>
                 <img src="question.svg" class="question-img" id="question1" />
                 <div class="toggle-container" id="toggle2" onclick="toggleSwitch('toggle2')">
                     <div class="toggle-switch"></div>
                 </div>
-                <span>波形</span>
+                <span>Waveform</span>
                 <select id="wave-b">
-                    <option value="1">波形A</option>
-                    <option value="2">波形B</option>
-                    <option value="3">波形C</option>
+                    <option value="1">Waveform A</option>
+                    <option value="2">Waveform B</option>
+                    <option value="3">Waveform C</option>
                 </select>
-                <span>失败增加强度</span>
+                <span>Intensity increase on failure</span>
                 <img src="question.svg" class="question-img" id="question2" />
                 <select id="failed-b">
                     <option value="0" selected>+0</option>
@@ -111,52 +111,52 @@
                     <option value="9">+9</option>
                     <option value="10">+10</option>
                 </select>
-                <span>输出时长</span>
+                <span>Output Duration</span>
                 <select id="time-b">
-                    <option value="1">1秒</option>
-                    <option value="2">2秒</option>
-                    <option value="3">3秒</option>
-                    <option value="4">4秒</option>
-                    <option value="5" selected>5秒</option>
-                    <option value="6">6秒</option>
-                    <option value="7">7秒</option>
-                    <option value="8">8秒</option>
-                    <option value="9">9秒</option>
-                    <option value="10">10秒</option>
+                    <option value="1">1 second</option>
+                    <option value="2">2 seconds</option>
+                    <option value="3">3 seconds</option>
+                    <option value="4">4 seconds</option>
+                    <option value="5" selected>5 seconds</option>
+                    <option value="6">6 seconds</option>
+                    <option value="7">7 seconds</option>
+                    <option value="8">8 seconds</option>
+                    <option value="9">9 seconds</option>
+                    <option value="10">10 seconds</option>
                 </select>
-                <button onclick="clearAB(2)"> 清除当前波形队列 </button>
+                <button onclick="clearAB(2)"> 清除当前Waveform队列 </button>
                 <img src="question.svg" class="question-img" id="question3" />
             </div>
         </div>
         <div class="status-container">
             <div class="status">
-                <span>当前状态: </span>
-                <span id="status" class="red">未连接</span>
+                <span>Current Status: </span>
+                <span id="status" class="red">Disconnected</span>
                 <span id="status-light" class="red"> ●</span>
             </div>
             <div class="connect-btn">
-                <button onclick="showInfo()">使用说明</button>
-                <button onclick="connectOrDisconn()" id="status-btn">连接</button>
+                <button onclick="showInfo()">Instructions</button>
+                <button onclick="connectOrDisconn()" id="status-btn">Connect</button>
             </div>
         </div>
         <div class="information-overlay" id="information-overlay">
             <div class="information">
-                <h2>使用说明</h2>
+                <h2>Instructions</h2>
                 <p>
-                    这是郊狼Socket控制官方demo，<span class="notify">本功能目前只支持郊狼3.0连接</span>。
+                    这是郊狼Socket控制官方demo，<span class="notify">本功能目前只支持郊狼3.0Connect</span>。
                     <br><br>
-                    Socket控制模式下，手机APP通过Socket服务连接到第三方控制端，并将收到的数据转发给郊狼。从而允许开发者通过网页、游戏或其他终端对郊狼进行控制。和远程控制类似，您也可以为本模式设置强度上限保护。
+                    Socket控制模式下，手机APP通过Socket服务Connect到第三方控制端，并将收到的数据转发给郊狼。从而允许开发者通过网页、游戏或其他终端对郊狼进行控制。和远程控制类似，您也可以为本模式设置强度上限保护。
                     <br><br>
-                    当前页面是我们提供的Web游戏demo，当小恐龙碰到障碍物时，就会控制郊狼输出脉冲。
+                    The current page is the Web game demo we provide. When the small dinosaur hits an obstacle, it will control the Coyote to output pulses.
                     <br><br>
-                    要开始游戏，首先点击右上角<span class="notify">【连接】</span>按钮生成二维码。然后在APP中选择右下角<span class="notify">【Socket控制】</span>模式，连接设备后点击<span class="notify">【连接socket服务器】</span>按钮扫码完成连接。
+                    要开始游戏，首先点击右上角<span class="notify">【Connect】</span>按钮生成二维码。然后在APP中选择右下角<span class="notify">【Socket控制】</span>模式，Connect设备后点击<span class="notify">【Connectsocket服务器】</span>按钮扫码完成Connect。
                     <br><br>
-                    我们已经在GitHub上开源相关协议和示例代码，以便开发者们自行搭建服务器进行控制，详情请访问链接：<span class="notify"><a href="https://github.com/DG-LAB-OPENSOURCE/DG-LAB-OPENSOURCE">点此跳转GitHub</a></span>
+                    We have open-sourced relevant protocols and sample code on GitHub so developers can build their own servers for control. For details, please visit the link: <span class="notify"><a href="https://github.com/DG-LAB-OPENSOURCE/DG-LAB-OPENSOURCE">Click here to go to GitHub</a></span>
                     <br><br>
-                    需要注意的是，Socket控制协议是开放的，我们无法对第三方控制端进行审核。<span class="notify"><strong>请不要扫描来源不明的Socket二维码</strong></span>。在您准备进行连接前，<span class="notify"><strong>请确保您已经设置好强度上限保护</strong></span>。
+                    需要注意的是，Socket控制协议是开放的，我们无法对第三方控制端进行审核。<span class="notify"><strong>请不要扫描来源不明的Socket二维码</strong></span>。在您准备进行Connect前，<span class="notify"><strong>请确保您已经设置好强度上限保护</strong></span>。
                 </p>
                 <div class="info-close">
-                    <button class="info-close-btn" onclick="closeInfo()">我知道了</button>
+                    <button class="info-close-btn" onclick="closeInfo()">I Got It</button>
                 </div>
             </div>
         </div>
@@ -180,23 +180,23 @@
     </div>
     <div class="intro-game">
         <div id="messageBox" class="sendmessage">
-            <h1 style="text-align: center;font-family: 'Open Sans', sans-serif;">按空格开始游戏</h1>
+            <h1 style="text-align: center;font-family: 'Open Sans', sans-serif;">Press Space to Start Game</h1>
         </div>
         <div class="game-title">
-            <div class="game-tips" id="game-tips">游戏规则</div>
-            <button class="tips-hide" onclick="hideOrShowTips()" id="tip-btn">隐藏</button>
+            <div class="game-tips" id="game-tips">Game Rules</div>
+            <button class="tips-hide" onclick="hideOrShowTips()" id="tip-btn">Hide</button>
         </div>
         <div class="game-content">
-            <h4>操作：空格：跳跃/开始游戏，S键：趴下，P：停止游戏<br><br>每当小恐龙碰到障碍物时，执行屏幕上方设置的波形和强度</h4>
-            <P>强度设置：点击屏幕上方A/B通道强度增减按钮设置强度，点击[时长]下拉菜单选择发送时长</P>
-            <p>提示：Websocket链接断开时游戏会直接结束，游戏异常请刷新页面</p>
+            <h4>操作：空格：跳跃/开始游戏，S键：趴下，P：停止游戏<br><br>每当小恐龙碰到障碍物时，执行屏幕上方设置的Waveform和强度</h4>
+            <P>Intensity setting: Click the A/B channel intensity increase/decrease buttons at the top of the screen to set intensity, click the [Duration] dropdown menu to select the sending duration</P>
+            <p>Tip: When the Websocket connection is disconnected, the game will end directly. If the game is abnormal, please refresh the page</p>
         </div>
     </div>
 </body>
 
 <script>
     var qrcode = document.getElementById("qrcode-overlay");
-    var qrcodeImg = new QRCode(document.getElementById("qrcode"), "https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#ws://39.108.168.199:9999/"); // 全局二维码
+    var qrcodeImg = new QRCode(document.getElementById("qrcode"), "https://www.dungeon-lab.com/app-download.php#DGLAB-SOCKET#ws://39.108.168.199:9999/"); // Global QR code
     let gamePanelInit = true;
 
     document.onkeydown = function (evt) {
@@ -208,7 +208,7 @@
             gamePanelInit = false;
         }
         else if (evt.keyCode == 32) {
-            // 阻止默认的空格键行为
+            // Prevent default spacebar behaviour
             evt.preventDefault();
         }
     };
@@ -219,22 +219,22 @@
         qrcode.style.visibility = "visible";
     }
 
-    const questionIcons = document.querySelectorAll('.question-img'); // 获取所有提示图标
+    const questionIcons = document.querySelectorAll('.question-img'); // Get all tooltip icons
     const tooltip = document.getElementById('tooltip');
 
     const tipsMsg = {
-        'question1': '当此通道软上限强度变化时，自动把此通道强度设置为软上限强度。(注意：开启后失败增加强度功能失效)',
-        'question2': '当小恐龙碰到障碍物时，此通道强度自动增加设置的值。(默认为+0) 注意：开启强度跟随软上限功能后此功能失效。',
-        'question3': '清除当前APP内此通道正在执行的波形数据，避免新的波形数据被之前的覆盖。'
+        'question1': '当此通道软上限强度变化时，自动把此通道强度设置为软上限强度。(注意：开启后Intensity increase on failure功能失效)',
+        'question2': '当小恐龙碰到障碍物时，此通道强度自动增加设置的值。(默认为+0) 注意：开启Intensity follows soft limit功能后此功能失效。',
+        'question3': '清除当前APP内此通道正在执行的Waveform数据，避免新的Waveform数据被之前的覆盖。'
     }
 
-    // 鼠标悬停事件
+    // Mouse hover event
     questionIcons.forEach(icon => {
         icon.addEventListener('mouseover', function (event) {
             const x = event.clientX;
             const y = event.clientY;
 
-            // 根据当前图标ID设置相应的提示文本
+            // Set corresponding prompt text based on the current icon ID
             tooltip.innerText = `${tipsMsg[icon.id]}`;
 
             tooltip.style.display = 'block';
@@ -242,9 +242,9 @@
             tooltip.style.top = y + 'px';
         });
 
-        // 鼠标离开事件
+        // Mouse leave event
         icon.addEventListener('mouseout', function (event) {
-            tooltip.style.display = 'none'; // 隐藏提示文字
+            tooltip.style.display = 'none'; // Hide提示文字
         });
     });
 
@@ -260,11 +260,11 @@
         const tips = document.querySelector('.game-content');
         if (tips.style.display === 'none') {
             tips.style.display = 'block';
-            document.getElementById('tip-btn').textContent = '隐藏';
+            document.getElementById('tip-btn').textContent = 'Hide';
             document.getElementById('messageBox').style.display = 'block';
         } else {
             tips.style.display = 'none';
-            document.getElementById('tip-btn').textContent = '显示';
+            document.getElementById('tip-btn').textContent = 'Show';
             document.getElementById('messageBox').style.display = 'none';
         }
     }

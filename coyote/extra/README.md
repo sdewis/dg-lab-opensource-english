@@ -1,18 +1,18 @@
-## 郊狼脉冲波形
+## Coyote Pulse Waveform
 
-本文我们将关于郊狼脉冲主机的波形协议进行部分解释，帮助广大郊狼爱好者更好理解脉冲波形的数据原理。
+In this article, we will provide some explanations regarding the waveform protocol of the Coyote pulse host, helping Coyote enthusiasts better understand the data principles of pulse waveforms.
 
-### 概念解释
+### Concept Explanation
 
-#### 波形频率
+#### Waveform Frequency
 
-郊狼的程序把每一秒分割成1000毫秒，在每个毫秒内都可以产生一次脉冲。我们通过控制脉冲和间隔来编码脉冲产生的规律。
+The Coyote program divides each second into 1000 milliseconds, and a pulse can be generated within each millisecond. We encode the rules of pulse generation by controlling pulses and intervals.
 
-波形频率表示一个输出单元的时长(输出单元由X个脉冲和Y个间隔组成)，单位是ms。
+The waveform frequency represents the duration of an output unit (an output unit consists of X pulses and Y intervals), in ms.
 
-所以如果您希望输出一个1Hz的波形，实际上波形频率=1000ms；若输出50Hz的波形，波形频率=20ms。
+Therefore, if you want to output a 1Hz waveform, the actual waveform frequency = 1000ms; if you output a 50Hz waveform, the waveform frequency = 20ms.
 
-|  脉冲频率  |  波形频率  |
+| Pulse Frequency | Waveform Frequency |
 |:------:|:------:|
 |  1Hz   | 1000ms |
 |  5Hz   | 200ms  |
@@ -22,24 +22,24 @@
 | 500Hz  |  2ms   |
 | 1000Hz |  1ms   |
 
-在郊狼V2 协议中，波形频率由[X 和 Y](/coyote/v2/README_V2.md)共同决定，其中X代表连续X毫秒发出X个脉冲，Y表示X个脉冲过后会间隔Y毫秒再发出X个脉冲并循环。
+In the Coyote V2 protocol, the waveform frequency is jointly determined by [X and Y](/coyote/v2/README_V2.md), where X represents emitting X pulses continuously for X milliseconds, and Y means after X pulses, there will be an interval of Y milliseconds before emitting X pulses again, and looping.
 
-> e.g<br/>
-参数【1,9】代表每隔9ms发出1个脉冲，总共耗时10ms，也就是脉冲频率为100hz，波形频率为10ms。参数【5,95】代表每隔95ms发出5个脉冲，总共耗时100ms，由于这五个脉冲连在一起并且持续时间仅为5ms，因此使用者只会感受到一次（五合一）脉冲，因此在使用者的体感中脉冲频率为10hz，波形频率为100ms
+> e.g.<br/>
+The parameter [1,9] means emitting 1 pulse every 9ms, taking a total of 10ms, which means the pulse frequency is 100Hz, and the waveform frequency is 10ms. The parameter [5,95] means emitting 5 pulses every 95ms, taking a total of 100ms. Because these five pulses are connected together and the duration is only 5ms, the user will only feel one (five-in-one) pulse, so in the user's bodily sensation, the pulse frequency is 10Hz, and the waveform frequency is 100ms.
 
-在郊狼V3 协议中，我们只提供了波形频率值的输入，而波形频率中脉冲(X)和间隔(Y)的分配由V3协议中的 [频率平衡参数1](/coyote/v3/README_V3.md) 来决定。
+In the Coyote V3 protocol, we only provide the input of the waveform frequency value, and the allocation of pulses (X) and intervals (Y) in the waveform frequency is determined by the [Frequency Balance Parameter 1](/coyote/v3/README_V3.md) in the V3 protocol.
 
-V3 协议中，波形频率的输入还需经过一次压缩转化，若用户想要波形频率线性变化，请参考以下例子。
+In the V3 protocol, the input of the waveform frequency also needs to undergo a compression conversion. If the user wants the waveform frequency to change linearly, please refer to the following example.
 
->e.g 1<br/>1. 确定要线性变化的脉冲频率，举例：1Hz，2Hz，3Hz，4Hz，5Hz，6Hz，7Hz，8Hz，9Hz，10Hz<br/>2. 转换为波形频率值: 1000ms,500ms,333ms,250ms,200ms,166ms,142ms,125ms,111ms,100ms<br/>3. 根据V3 协议的转化公式，将波形频率转化为实际输入值：240，180，146，130,120,113,108,105,102,100<br/>4. 根据协议4个一组，不足的0补，每100ms向设备输入
+>e.g. 1<br/>1. Determine the pulse frequencies to be changed linearly, for example: 1Hz, 2Hz, 3Hz, 4Hz, 5Hz, 6Hz, 7Hz, 8Hz, 9Hz, 10Hz<br/>2. Convert to waveform frequency values: 1000ms, 500ms, 333ms, 250ms, 200ms, 166ms, 142ms, 125ms, 111ms, 100ms<br/>3. According to the conversion formula of the V3 protocol, convert the waveform frequency to the actual input value: 240, 180, 146, 130, 120, 113, 108, 105, 102, 100<br/>4. According to the protocol, input to the device in groups of 4 every 100ms, padding with 0s if insufficient.
 
->e.g 2<br/>1. 确定要线性变化的波形频率值，举例：100ms，200ms，300ms，400ms，500ms，600ms，700ms，800ms，900ms，1000ms<br/>2. 根据V3 协议的转化共识，将波形频率转化为实际输入值：100，120，140，160，180，200，210，220，230，240<br/>3. 根据协议4个一组，不足的0补，每100ms向设备输入
+>e.g. 2<br/>1. Determine the waveform frequency values to be changed linearly, for example: 100ms, 200ms, 300ms, 400ms, 500ms, 600ms, 700ms, 800ms, 900ms, 1000ms<br/>2. According to the conversion consensus of the V3 protocol, convert the waveform frequency to the actual input value: 100, 120, 140, 160, 180, 200, 210, 220, 230, 240<br/>3. According to the protocol, input to the device in groups of 4 every 100ms, padding with 0s if insufficient.
 
-#### 波形频率与实际输入值的转化
+#### Conversion between Waveform Frequency and Actual Input Value
 
-由于人体对于频率的细微变化感知并不敏感，波形频率(输出单元)越大，则波形频率(输出单元时长)变化相对应的脉冲频率变化越细微。另外这个转化可以压缩数据长度，可以以更短的数据进行交互
+Since the human body is not sensitive to slight changes in frequency, the larger the waveform frequency (output unit), the more subtle the change in pulse frequency corresponding to the change in waveform frequency (output unit duration). In addition, this conversion can compress the data length, allowing interaction with shorter data.
 
-| 波形频率  | 输出值 |  脉冲频率  |
+| Waveform Frequency | Output Value | Pulse Frequency |
 |:-----:|:---:|:------:|
 | 10ms  | 10  | 100Hz  |
 | 20ms  | 20  |  50Hz  |
@@ -51,29 +51,29 @@ V3 协议中，波形频率的输入还需经过一次压缩转化，若用户�
 | 680ms | 208 | 1.47Hz |
 | 750ms | 215 | 1.33Hz |
 
-#### 波形强度
+#### Waveform Intensity
 
-一次脉冲由两个对称的正负单极性脉冲组成，两个单极性脉冲的高度(电压)由这个通道的强度决定。我们通过控制脉冲宽度的方式控制脉冲带来的感受的强弱。脉冲越宽，感受就越强，反之脉冲越窄感受约越弱。脉冲宽度的节奏性变化可以创造出不同的脉冲感受。
+One pulse consists of two symmetrical positive and negative unipolar pulses. The height (voltage) of the two unipolar pulses is determined by the intensity of this channel. We control the strength of the feeling brought by the pulse by controlling the pulse width. The wider the pulse, the stronger the feeling; conversely, the narrower the pulse, the weaker the feeling. The rhythmic change of the pulse width can create different pulse sensations.
 
-在郊狼V2 协议中，波形强度由[Z](/coyote/v2/README_V2.md)决定,官方APP的值范围是(0 ~ 20)，波形强度是一个相对值，所以并没有实际的单位来表示
+In the Coyote V2 protocol, the waveform intensity is determined by [Z](/coyote/v2/README_V2.md). The value range of the official APP is (0 ~ 20). The waveform intensity is a relative value, so there is no actual unit to represent it.
 
-在郊狼V3 协议中，波形强度的值范围是(0 ~ 100)，波形强度是一个相对值，所以并没有实际的单位来表示
+In the Coyote V3 protocol, the value range of the waveform intensity is (0 ~ 100). The waveform intensity is a relative value, so there is no actual unit to represent it.
 
-V2的波形强度与V3的波形强度的映射关系: (V2 协议中 波形强度 20) ≈ (V3 协议中 波形强度 100)
+Mapping relationship between V2 waveform intensity and V3 waveform intensity: (Waveform Intensity 20 in V2 Protocol) ≈ (Waveform Intensity 100 in V3 Protocol)
 
-### 输出窗口
+### Output Window
 
-V2 协议的输出窗口为100ms，V3 协议的输出窗口为25ms，但每次设置的数据为4组，所以依然可以认为是100ms。
+The output window of the V2 protocol is 100ms, and the output window of the V3 protocol is 25ms, but each time the set data is 4 groups, so it can still be considered as 100ms.
 
-很多人对于波形频率值和输出窗口值的冲突表示困惑，波形频率时长是大于输出窗口的，那么对于下一个周期输入的数据设备将如何处理？
+Many people are confused about the conflict between the waveform frequency value and the output window value. If the duration of the waveform frequency is greater than the output window, how will the device process the data input in the next cycle?
 
-我们的设备内部对于这一情况有一套相对复杂的处理方式，处理细节暂不描述，但给出几个建议：
+Our device has a relatively complex set of processing methods internally for this situation. The processing details are not described for now, but a few suggestions are given:
 
-1. 若希望稳定输出某个波形频率，建议稳定输入该波形频率值
-2. 若波形频率值大于输出窗口，下一周期输入的波形频率有所变化，那么真正的输出脉冲可能并非输入值所对应的效果，而是经过复杂方式处理后的效果
+1. If you want to stably output a certain waveform frequency, it is recommended to stably input the value of that waveform frequency.
+2. If the waveform frequency value is greater than the output window, and the input waveform frequency changes in the next cycle, then the actual output pulse may not be the effect corresponding to the input value, but the effect after complex processing.
 
-### V2协议波形 转化为 V3协议波形
+### Conversion of V2 Protocol Waveform to V3 Protocol Waveform
 
-V3波形频率 = V2 (X + Y) 后，执行(10 ~ 1000) -> (10 ~ 240)的转化
+V3 Waveform Frequency = After V2 (X + Y), execute the conversion of (10 ~ 1000) -> (10 ~ 240)
 
-V3波形强度 = V2 (Z * 5)
+V3 Waveform Intensity = V2 (Z * 5)
