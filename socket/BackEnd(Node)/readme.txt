@@ -22,3 +22,12 @@ Install PM2 globally. Because node programs do not support background running na
 5. Execute the command npx pm2 start websocketNode.js to see the running prompt.
 If you need to view the log printed during operation, you can enter npx pm2 log 0 in the command line in this directory and press enter to view after running the code.
 (Normally, if you only have one program, the id is 0. If you run multiple programs, after executing the start command, the command line will display the id of your current task. Change the 0 at the end of the command to the corresponding id.)
+
+--- Docker Deployment (Alternative) ---
+
+If you have Docker installed, you can deploy the server much more easily:
+
+1. Navigate to the `socket` directory.
+2. Run: `docker compose up -d`
+
+This will automatically build the environment, install dependencies, and start the relay server on port 9999. It will also ensure the server restarts automatically if it crashes or the system reboots.

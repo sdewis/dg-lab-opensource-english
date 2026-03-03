@@ -1,0 +1,10 @@
+{
+  "name": "dg-lab-socket-backend",
+  "version": "1.0.0",
+  "description": "WebSocket relay server for DG-LAB Coyote",
+  "main": "websocketNode.js",
+  "dependencies": {
+    "ws": "^8.18.0",
+    "uuid": "^9.0.1"
+  }
+}

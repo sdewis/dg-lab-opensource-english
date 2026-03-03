@@ -1,0 +1,7 @@
+services:
+  dg-lab-relay:
+    build: ./BackEnd(Node)
+    container_name: dg-lab-relay
+    ports:
+      - "9999:9999"
+    restart: always
